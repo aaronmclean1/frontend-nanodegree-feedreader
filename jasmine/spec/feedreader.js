@@ -40,10 +40,21 @@ $(function()
 			for (var i = 0; i < allFeeds.length; i++) 
 			{
 				expect(allFeeds[i].url).toBeDefined();
-				expect(allFeeds[i].url).not.toBe('');
+				expect(allFeeds[i].url).not.toBe('');				
+			}            
+        });
+        
+        /* Extra Credit: Make sure the html URL is properly formed
+         */        
+        it('allFeeds.url is properly formed', function() 
+        {
+			//make sure allFeeds.name defined and not empty
+			for (var i = 0; i < allFeeds.length; i++) 
+			{
+				expect(allFeeds[i].url.match(/^http([s]?):\/\/.*/)).not.toBe(null);
 			}              
             
-        });
+        });         
         
         /* TODO: Write a test that loops through each feed
          * in the allFeeds object and ensures it has a name defined
@@ -56,16 +67,13 @@ $(function()
 			{
 				expect(allFeeds[i].name).toBeDefined();
 				expect(allFeeds[i].name).not.toBe('');
-			}              
-            
-        });
-    });
-    
+			}            
+        });        
+    });    
        
 	 /* TODO: Write a new test suite named "The menu" */
     describe('The menu', function() 
-    {
-    
+    {    
         /* TODO: Write a test that ensures the menu element is
          * hidden by default. You'll have to analyze the HTML and
          * the CSS to determine how we're performing the
@@ -75,8 +83,7 @@ $(function()
         {           
             expect($('body').attr('class')).toBe('menu-hidden');              
         });
-        
-        
+                
          /* TODO: Write a test that ensures the menu changes
           * visibility when the menu icon is clicked. This test
           * should have two expectations: does the menu display when
@@ -91,54 +98,32 @@ $(function()
             //click the href to hide the menu
             $('.menu-icon-link').trigger('click');
             expect($('body').attr('class')).toBe('menu-hidden');             
-        });  
-        
-        
-        
-
+        }); 
     });           
 
-    /* TODO: Write a new test suite named "Initial Entries" */
-
+    /* TODO: Write a new test suite named "Initial Entries" */         
+    describe('Initial Entries', function () 
+    {
         /* TODO: Write a test that ensures when the loadFeed
          * function is called and completes its work, there is at least
          * a single .entry element within the .feed container.
          * Remember, loadFeed() is asynchronous so this test wil require
          * the use of Jasmine's beforeEach and asynchronous done() function.
-         */
-    describe('Initial Entries', function() 
-    {
-		//beforeEach(function(done) 
-		//{
-		//	loadFeed(1) 
-		//}); 
+         */		
 		
-		var test1;
-		
-		beforeEach(function(done) 
+		beforeEach(function (done) 
+        {
+			loadFeed(1, done);
+        });
+
+		it('At least one .entry element', function (done) 
 		{
-			//test1 = loadFeed(1, 
-			//{
-			//	success: function () 
-			//	{
-			//		done();
-			//	}
-			//});
-			loadFeed(3);
+			//Check to see if at least one entry element exists
+			expect($('*').hasClass('entry')).toBe(true);
+
 			done();
-			
-		});		
-      
-		it('At least one .entry element', function(done) {
-			loadFeed(2);
-			//expect($('*').hasClass('entry')).toBe(true); 
-			//expect($('article').attr('class')).toBe('entry'); 
-			expect(allFeeds).toBeDefined();
-			//console.log($( "body" ).html())
-			//console.log(feedUrl);
-			done();
-		});        
-    });          
+		});
+    }); 
 
     /* TODO: Write a new test suite named "New Feed Selection"
 
@@ -148,16 +133,26 @@ $(function()
          */
     describe('New Feed Selection', function() 
     {
-		//$('.menu-icon-link').trigger('click');
-		
-        it('RSS Link click', function() 
-        {  
-            //click the href to show the menu
-            $('#3').trigger('click');
-            console.log($( ".feed" ).html())   
-            expect(allFeeds).toBeDefined();
-        }); 		
-    });  
-    
-    
+		var feed1,feed2;
+
+		beforeEach(function (done) 
+		{           
+			//store the initial feed value
+			feed1 = $('.feed a').html();
+
+			//load the second feed
+			loadFeed(2, done);           
+		});
+
+		it('RSS Link click', function (done) 
+		{
+			//store 2nd feed value
+			feed2 = $('.feed a').html();       
+
+			//make sure feed 1 doesn't equal feed 2
+			expect(feed1).not.toBe(feed2);
+
+			done();
+		});        
+    });    
 }());
